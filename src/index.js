@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import QRCode from "qrcode";
 
 const server = http.createServer(app);
 
@@ -11,7 +12,9 @@ dotenv.config({ path: './config.env'});
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
 
 app.get("/", (req, res) => {
     res.send("Hello to QR Code Generator API");
@@ -73,4 +76,17 @@ app.get("/info/:infoID", (req, res) => {
         }
     });
 });
+
+app.get("/qrcode", (req, res) =>{
+    QRCode.toString('http://www.google.com',{type: 'svg', width: '300'}, function (err, string){
+                if(err) throw err
+                res.send(string);
+    });
+    console.log("QR fetched");
+});
+
+QRCode.toString('http://www.google.com', function (err, string) {
+  if (err) throw err
+  console.log(string)
+})
 
